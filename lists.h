@@ -121,3 +121,15 @@ std::vector<std::string> verbsList =
 	"attract",
 	"return"
 };
+
+std::vector<std::string> complementizersList =
+{
+	"what",
+	"who",
+	"when",
+	"where",
+	"that",
+	"whose",
+	"which",
+	"whom"
+};

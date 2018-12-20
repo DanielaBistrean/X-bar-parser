@@ -7,13 +7,35 @@
 #include <string>
 #include <fstream>
 #include <stack>
+#include <functional>
+
+struct special_compare : public std::unary_function<std::string, bool>
+{
+  explicit special_compare(const std::string &sword) : word(sword) {};
+  bool operator() (const std::string &verb)
+  {
+  	auto it = word.find(verb);
+  	auto dif = word.size() - verb.size();
+  	if (it == 0)
+  	{
+  		std::string newWord = word.substr(verb.size(), dif);
+
+  		if ((dif == 0) || (newWord == "ed" || newWord == "ded"))
+  			return true;
+  	}
+  	
+  	return false;
+  };
+  std::string word;
+};
+
 
 int
 main(int argc, char const *argv[])
 {
 	std::string input;
 	std::vector<std::string> v;
-	std::stack myStack;
+	std::stack<Node *> myStack;
 
 	std::getline(std::cin, input);
 
@@ -42,19 +64,51 @@ main(int argc, char const *argv[])
 			currentN->getRight()->getLeft()->setValue(v[i + 1]);
 			// myStack.push(currentN);
 
-			if (current != nullptr)
+			if ((!myStack.empty()) && (myStack.top()->getType() == VP))
 			{
-				if (current->getType() == VP)
-					current->setLeft(currentN);
-				else
-				{
-					currentN->getRight()->setRight(current);
-					current = currentN;
-				}
+				Node *stack = myStack.top();
+				Node *nodeIP = new Node(IP);
+				nodeIP->setLeft(currentN);
+				nodeIP->setRight(new Node(IBAR));
+				nodeIP->getRight()->setRight(stack);
+				nodeIP->getRight()->setLeft(new Node(I));
+				currentN = nodeIP;
+				myStack.push(currentN);
+			}
+			else if ((!myStack.empty()) && (myStack.top()->getType() == IP))
+			{
+				Node *stack = myStack.top();
+				stack->setLeft(currentN);
 			}
 			else
-				current = currentN;
+				myStack.push(currentN);
+
+			// if (current != nullptr)
+			// {
+			// 	if (current->getType() == VP)
+			// 		current->setLeft(currentN);
+			// 	else
+			// 	{
+			// 		currentN->getRight()->setRight(current);
+			// 		current = currentN;
+			// 	}
+			// }
+			// else
+			// 	current = currentN;
 			continue;
+		}
+
+		auto foundC = std::find(complementizersList.begin(), complementizersList.end(), v[i]);
+
+		if (foundC != complementizersList.end())
+		{
+			Node *currentN = new Node(CP);
+			currentN->setLeft(new Node(SPECIFIER));
+			currentN->getLeft()->setValue(v[i]);
+
+			currentN->setRight(new Node(CBAR));
+			currentN->getRight()->setLeft(new Node(C));
+			currentN->getRight()->getLeft()->setValue(v[i + 1]);
 		}
 
 		auto foundP = std::find(prepositionsList.begin(), prepositionsList.end(), v[i]);
@@ -66,47 +120,108 @@ main(int argc, char const *argv[])
 			currentN->getRight()->setLeft(new Node(P));
 			currentN->getRight()->getLeft()->setValue(v[i]);
 
-			if (current != nullptr)
+			if ((!myStack.empty()) && (myStack.top()->getType() == NP))
 			{
-				currentN->getRight()->setRight(current);
+				Node *stack = myStack.top();
+				myStack.pop();
+				currentN->getRight()->setRight(stack);
+				myStack.push(currentN);
 			}
+			else
+				myStack.push(currentN);
 
-			current = currentN;
+			// if (current != nullptr)
+			// {
+			// 	currentN->getRight()->setRight(current);
+			// }
+
+			// current = currentN;
 			continue;
 		}
 
-		auto foundV = std::find(verbsList.begin(), verbsList.end(), v[i]);
+		auto foundV = std::find_if(verbsList.begin(), verbsList.end(), special_compare{v[i]});
 
 		if (foundV != verbsList.end())
 		{
 			Node *currentN = new Node(VP);
 			currentN->setRight(new Node(VBAR));
 			currentN->getRight()->setLeft(new Node(V));
-			currentN->getRight()->getLeft()->setValue(v[i]);
+			currentN->getRight()->getLeft()->setValue(*foundV);
 
-			if (current != nullptr)
+			
+			while ((!myStack.empty()) && (myStack.top()->getType() == NP || myStack.top()->getType() == PP))
 			{
-				currentN->getRight()->setRight(current);
+				Node *prev = myStack.top();
+
+				myStack.pop();
+				
+				Node *bar = currentN->getRight();
+				if (bar->getRight())
+				{
+					Node *newBar = new Node{VBAR};
+					currentN->setRight(newBar);
+					newBar->setLeft(bar);
+					bar = newBar;
+				}
+				bar->setRight(prev);
+				// currentN->getRight()->setRight(prev);
 			}
 
-			current = currentN;
-			continue;
+			// std::string suffix = v[i].substr(foundV->size());
+
+			// Node *nodeIP = new Node(IP);
+			// // nodeIP->setLeft(currentN);
+			// nodeIP->setRight(new Node(IBAR));
+			// nodeIP->getRight()->setRight(currentN);
+			// nodeIP->getRight()->setLeft(new Node(I));
+			// nodeIP->getRight()->getLeft()->setValue("-" + suffix);
+			// currentN = nodeIP;
+
+			// myStack.push(currentN);
+
+			// // if (current != nullptr)
+			// // {
+			// // 	currentN->getRight()->setRight(current);
+			// // }
+
+			// // current = currentN;
+			// continue;
 		}
 
-		Node *stack = myStack.top();
-		if (currentN->getType() == VP)
+		Node *currentN = new Node(NP);
+
+		currentN->setRight(new Node(NBAR));
+		currentN->getRight()->setLeft(new Node(N));
+		currentN->getRight()->getLeft()->setValue(v[i]);
+		// myStack.push(currentN);
+
+		if ((!myStack.empty()) && (myStack.top()->getType() == VP))
 		{
-
+			Node *stack = myStack.top();
+			Node *nodeIP = new Node(IP);
+			nodeIP->setLeft(currentN);
+			nodeIP->setRight(new Node(IBAR));
+			nodeIP->getRight()->setRight(stack);
+			nodeIP->getRight()->setLeft(new Node(I));
+			currentN = nodeIP;
+			myStack.push(currentN);
 		}
+		else if ((!myStack.empty()) && (myStack.top()->getType() == IP))
+		{
+			Node *stack = myStack.top();
+			stack->setLeft(currentN);
+		}
+		else
+			myStack.push(currentN);
 	}
 
-	std::cout << current->printTree() << "\n";
+	std::cout << myStack.top()->printTree() << "\n";
 
 	std::string latex =
         "\\documentclass[margin=5mm]{standalone} "
 		"\\usepackage{tikz-qtree}"
 		"\\begin{document}"
-        "\\Tree " + current->printTree() + ""
+        "\\Tree " + myStack.top()->printTree() + ""
         "\\end{document}";
 
 	try {
