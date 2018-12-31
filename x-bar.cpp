@@ -126,6 +126,7 @@ main(int argc, char const *argv[])
 			// 	bar->setRight(prev);
 			// 	// currentN->getRight()->setRight(prev);
 			// }
+			continue;
 		}
 		
 
@@ -195,7 +196,7 @@ main(int argc, char const *argv[])
 			// nodeIP->getRight()->getLeft()->setValue("-" + suffix);
 			// currentN = nodeIP;
 
-			// myStack.push(currentN);
+			myStack.push(currentN);
 
 			// // if (current != nullptr)
 			// // {
@@ -203,34 +204,34 @@ main(int argc, char const *argv[])
 			// // }
 
 			// // current = currentN;
-			// continue;
+			continue;
 		}
 
-		Node *currentN = new Node(NP);
+		// Node *currentN = new Node(NP);
 
-		currentN->setRight(new Node(NBAR));
-		currentN->getRight()->setLeft(new Node(N));
-		currentN->getRight()->getLeft()->setValue(v[i]);
-		// myStack.push(currentN);
+		// currentN->setRight(new Node(NBAR));
+		// currentN->getRight()->setLeft(new Node(N));
+		// currentN->getRight()->getLeft()->setValue(v[i]);
+		// // myStack.push(currentN);
 
-		if ((!myStack.empty()) && (myStack.top()->getType() == VP))
-		{
-			Node *stack = myStack.top();
-			Node *nodeIP = new Node(IP);
-			nodeIP->setLeft(currentN);
-			nodeIP->setRight(new Node(IBAR));
-			nodeIP->getRight()->setRight(stack);
-			nodeIP->getRight()->setLeft(new Node(I));
-			currentN = nodeIP;
-			myStack.push(currentN);
-		}
-		else if ((!myStack.empty()) && (myStack.top()->getType() == IP))
-		{
-			Node *stack = myStack.top();
-			stack->setLeft(currentN);
-		}
-		else
-			myStack.push(currentN);
+		// if ((!myStack.empty()) && (myStack.top()->getType() == VP))
+		// {
+		// 	Node *stack = myStack.top();
+		// 	Node *nodeIP = new Node(IP);
+		// 	nodeIP->setLeft(currentN);
+		// 	nodeIP->setRight(new Node(IBAR));
+		// 	nodeIP->getRight()->setRight(stack);
+		// 	nodeIP->getRight()->setLeft(new Node(I));
+		// 	currentN = nodeIP;
+		// 	myStack.push(currentN);
+		// }
+		// else if ((!myStack.empty()) && (myStack.top()->getType() == IP))
+		// {
+		// 	Node *stack = myStack.top();
+		// 	stack->setLeft(currentN);
+		// }
+		// else
+		// 	myStack.push(currentN);
 	}
 
 	std::cout << myStack.top()->printTree() << "\n";
