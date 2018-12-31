@@ -108,8 +108,26 @@ main(int argc, char const *argv[])
 
 			currentN->setRight(new Node(CBAR));
 			currentN->getRight()->setLeft(new Node(C));
-			currentN->getRight()->getLeft()->setValue(v[i + 1]);
+			// currentN->getRight()->getLeft()->setValue(v[i + 1]);
+			// while ((!myStack.empty()) && (myStack.top()->getType() == IP))
+			// {
+			// 	Node *prev = myStack.top();
+
+			// 	myStack.pop();
+				
+			// 	Node *bar = currentN->getRight();
+			// 	if (bar->getRight())
+			// 	{
+			// 		Node *newBar = new Node{CBAR};
+			// 		currentN->setRight(newBar);
+			// 		newBar->setLeft(bar);
+			// 		bar = newBar;
+			// 	}
+			// 	bar->setRight(prev);
+			// 	// currentN->getRight()->setRight(prev);
+			// }
 		}
+		
 
 		auto foundP = std::find(prepositionsList.begin(), prepositionsList.end(), v[i]);
 

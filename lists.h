@@ -40,7 +40,7 @@ std::vector<std::string> determinersList =
 	"a",
 	"an",
 	"this",
-	"that",
+	// "that",
 	"these",
 	"those",
 	"my",
