@@ -37,11 +37,11 @@ main(int argc, char const *argv[])
 {
 	wninit();
 
-	std::string input;
+	std::string input = "Sarah returned the book to the library in this afternoon";
 	std::vector<std::string> v;
 	std::stack<Node *> myStack;
 
-	std::getline(std::cin, input);
+	// std::getline(std::cin, input);
 
 	std::istringstream tmp {input};
 	std::string word;
@@ -556,11 +556,9 @@ main(int argc, char const *argv[])
 	if (!solution.empty())
 	{
 		NodeList& n = solution[0];
-		std::cout << "Is here?\n";
 
 		if (!n.nodes.empty())
 		{
-			std::cout << "Is here?\n";
 			std::cout << n.nodes.front()->printTree() << "\n";
 
 			std::string latex =
