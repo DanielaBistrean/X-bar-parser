@@ -37,7 +37,7 @@ main(int argc, char const *argv[])
 {
 	wninit();
 
-	std::string input = "the boy say that the girl returned the book to the library in this afternoon";
+	std::string input = "the boy said that the girl returned the book to the library in this afternoon";
 	std::vector<std::string> v;
 	std::stack<Node *> myStack;
 
