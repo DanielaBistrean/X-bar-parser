@@ -72,7 +72,7 @@ Node::combine(Node* first, Node* second)
 		}
 		case NP:
 		{
-			if (second->getType() == IP && !second->getLeft())
+			if ((second->getType() == IP || second->getType() == CP) && !second->getLeft())
 			{
 				second->setLeft(first);
 				return second;

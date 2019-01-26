@@ -37,7 +37,7 @@ main(int argc, char const *argv[])
 {
 	wninit();
 
-	std::string input = "Sarah returned the book to the library in this afternoon";
+	std::string input = "the boy say that the girl returned the book to the library in this afternoon";
 	std::vector<std::string> v;
 	std::stack<Node *> myStack;
 
@@ -280,6 +280,8 @@ main(int argc, char const *argv[])
 		std::string word = *it;
 		bool found = false;
 
+		// std::cout << "Processing word \"" << word << "\"...\n";
+
 		if (isDet(word))
 		{
 			found = true;
@@ -334,7 +336,7 @@ main(int argc, char const *argv[])
 			found = true;
 			for (const auto & it : posibilities)
 			{
-				if (it.nodes.empty() || it.nodes.front()->getType() == PP || it.nodes.front()->getType() == NP)
+				if (it.nodes.empty() || it.nodes.front()->getType() == PP || it.nodes.front()->getType() == NP || it.nodes.front()->getType() == CP)
 				{
 					NodeList n{it};
 
@@ -366,7 +368,7 @@ main(int argc, char const *argv[])
 						ip->setRight(new Node(IBAR));
 						ip->getRight()->setLeft(new Node(I));
 						ip->getRight()->setRight(currentN);
-						currentN = ip;
+						currentN = ip;	
 					}
 
 					n.nodes.push_front(currentN);
@@ -518,6 +520,7 @@ main(int argc, char const *argv[])
 			auto second = std::next(first);
 			int i = 0;
 			int j = 1;
+
 			while (p.nodes.size() > 1)
 			{
 				if (second == p.nodes.end())
@@ -527,6 +530,7 @@ main(int argc, char const *argv[])
 				}
 
 				Node *tmp = Node::combine(*first, *second);
+				std::cout << Node::convertTypeToString(tmp) << "\n";
 
 				if (tmp == *first)
 				{
